@@ -25,6 +25,9 @@ luac.out
 *.def
 *.exp
 
+# Mac stuff
+  .DS_Store
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so
