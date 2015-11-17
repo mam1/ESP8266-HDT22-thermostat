@@ -11,9 +11,13 @@ function init_i2c_display()
      local sda = 5 -- GPIO14
      local scl = 6 -- GPIO12
      local sla = 0x3c
-     print("  initializng OLED display on pins"..sda.." and "..scl)    
+     print("  initializng I2c OLED display on pins "..sda.." and "..scl)    
      i2c.setup(0, sda, scl, i2c.SLOW)
      disp = u8g.ssd1306_128x64_i2c(sla)
+     disp:setFont(u8g.font_6x10)
+     disp:setFontRefHeightExtendedText()
+     disp:setDefaultForegroundColor()
+     disp:setFontPosTop()
 end
 
 --get data from DHT22 sensor on <pin>
@@ -86,11 +90,12 @@ function update()
 end
 
 -- ************** start main loop ********************
+    print("\n\n*** thermo.lua  version "..version.." ***")
     init_i2c_display()
 if (#PINS ~= #FIELDS) then 
 	print("\n***** pin count and field count do not match\naborting")
 else
-    print("\n\n*** thermo.lua  version "..version.." ***")
+
 	print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
 	print("  running update every " .. delay .. "ms\n")
 
