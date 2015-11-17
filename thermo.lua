@@ -3,8 +3,19 @@ CHANNEL_API_KEY = "WLDS1EKH6GRTK2QN"
 delay = 60000
 PINS =   {1,1}
 FIELDS = {1,2}
-
 pinptr = 1
+
+-- setup I2c and connect display
+function init_i2c_display()
+     -- SDA and SCL can be assigned freely to available GPIOs
+     local sda = 5 -- GPIO14
+     local scl = 6 -- GPIO12
+     local sla = 0x3c
+     print("  initializng OLED display on pins"..sda.." and "..scl)    
+     i2c.setup(0, sda, scl, i2c.SLOW)
+     disp = u8g.ssd1306_128x64_i2c(sla)
+end
+
 --get data from DHT22 sensor on <pin>
 function rdDHT22(pin)
 	local tmp, hmd
@@ -75,11 +86,13 @@ function update()
 end
 
 -- ************** start main loop ********************
+    init_i2c_display()
 if (#PINS ~= #FIELDS) then 
 	print("\n***** pin count and field count do not match\naborting")
 else
     print("\n\n*** thermo.lua  version "..version.." ***")
 	print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
 	print("  running update every " .. delay .. "ms\n")
---	tmr.alarm(0, delay, 1, update) 
+
+	tmr.alarm(0, delay, 1, update) 
 end
