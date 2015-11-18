@@ -6,15 +6,17 @@ function init_OLED(sda,scl) --Set up the u8glib lib
      disp:setFontRefHeightExtendedText()
      disp:setDefaultForegroundColor()
      disp:setFontPosTop()
+     disp:setColorIndex(1)
 end
 
 function draw()
-  disp:setColorIndex(1)
-  disp:drawBox(10, 12, 20, 38)  
-  disp:setFont(u8g_font_osb35)
-  disp:drawStr(40, 50, "A")
-  disp:setColorIndex(0)
-  disp:drawPixel(28, 14) 
+  
+--  disp:drawBox(10, 12, 20, 38)  
+--  disp:setFont(u8g_font_osb35)
+--  disp:drawStr(40, 50, "A")
+  disp:drawStr(50,20,"*********")
+--  disp:setColorIndex(0)
+--  disp:drawPixel(28, 14) 
 end
 
 init_OLED(5,6) --Run setting up
@@ -24,7 +26,7 @@ print("start")
   disp:firstPage() 
 
     while disp:nextPage() do 
-        draw()
+        disp:drawStr(50,20,"**** AAA *****")
         end
 
 

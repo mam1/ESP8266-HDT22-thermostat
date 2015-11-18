@@ -18,6 +18,7 @@ function init_i2c_display()
      disp:setFontRefHeightExtendedText()
      disp:setDefaultForegroundColor()
      disp:setFontPosTop()
+     disp:setColorIndex(1)
 end
 
 function ascii_1()
@@ -108,7 +109,7 @@ end
    --picture loop
   disp:firstPage() 
   while disp:nextPage() do 
-    disp:drawStr(10,10,"*********")
+    disp:drawStr(10,10,"xxxx")
   end
  
     
