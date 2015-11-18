@@ -1,15 +1,15 @@
-version = "0.0.0"
+version = "0.0.1"
 CHANNEL_API_KEY = "WLDS1EKH6GRTK2QN"
-delay = 60000
-PINS =   {1,1}
-FIELDS = {1,2}
+delay = 6000
+PINS =   {1,1}  --DHT22 data pin
+FIELDS = {1,2}  --ThingSpeak fields
 pinptr = 1
 
 -- setup I2c and connect display
 function init_i2c_display()
      -- SDA and SCL can be assigned freely to available GPIOs
-     local sda = 5 -- GPIO14
-     local scl = 6 -- GPIO12
+     local sda = 6 -- GPIO14
+     local scl = 5 -- GPIO12
      local sla = 0x3c
      print("  initializng I2c OLED display on pins "..sda.." and "..scl)    
      i2c.setup(0, sda, scl, i2c.SLOW)
@@ -18,6 +18,18 @@ function init_i2c_display()
      disp:setFontRefHeightExtendedText()
      disp:setDefaultForegroundColor()
      disp:setFontPosTop()
+end
+
+function ascii_1()
+    print("ascii_1 called")
+     local x, y, s
+     disp:drawStr(0, 0, "ASCII page 1")
+     for y = 0, 5, 1 do
+          for x = 0, 15, 1 do
+               s = y*16 + x + 32
+               disp:drawStr(x*7, y*10+10, string.char(s))
+          end
+     end
 end
 
 --get data from DHT22 sensor on <pin>
@@ -92,6 +104,14 @@ end
 -- ************** start main loop ********************
     print("\n\n*** thermo.lua  version "..version.." ***")
     init_i2c_display()
+
+   --picture loop
+  disp:firstPage() 
+  while disp:nextPage() do 
+    disp:drawStr(10,10,"*********")
+  end
+ 
+    
 if (#PINS ~= #FIELDS) then 
 	print("\n***** pin count and field count do not match\naborting")
 else
