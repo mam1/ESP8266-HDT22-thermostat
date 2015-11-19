@@ -18,7 +18,7 @@ wifi.sta.connect()
  print("   The module MAC address is: " .. wifi.ap.getmac())
  print("   Config done, IP is "..wifi.sta.getip())
  print("\n")
- --dofile ("thermo.lua")
+ dofile ("thermo.lua")
  
  end
 end)

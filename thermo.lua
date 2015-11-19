@@ -1,9 +1,12 @@
-version = "0.0.1"
+version = "0.1.0"
 CHANNEL_API_KEY = "WLDS1EKH6GRTK2QN"
-delay = 6000
+delay = 60000
 PINS =   {1,1}  --DHT22 data pin
 FIELDS = {1,2}  --ThingSpeak fields
 pinptr = 1
+
+tempStr = " "
+hmdyStr = " "
 
 -- setup I2c and connect display
 function init_i2c_display()
@@ -21,26 +24,15 @@ function init_i2c_display()
      disp:setColorIndex(1)
 end
 
-function ascii_1()
-    print("ascii_1 called")
-     local x, y, s
-     disp:drawStr(0, 0, "ASCII page 1")
-     for y = 0, 5, 1 do
-          for x = 0, 15, 1 do
-               s = y*16 + x + 32
-               disp:drawStr(x*7, y*10+10, string.char(s))
-          end
-     end
-end
 
-function dispit(line,text1,text2,text3)
+function dispPage(line,text1,text2,text3)
 
    --picture loop
   disp:firstPage() 
   while disp:nextPage() do 
     disp:drawStr(0,line,text1)
     disp:drawStr(0,(line+15),text2)
-    disp:drawStr(0,(line+25),text3)
+    disp:drawStr(0,(line+27),text3)
   end
  
 end
@@ -104,30 +96,29 @@ function update()
     t, h = rdDHT22(PINS[pinptr])
     if pinptr % 2 ~= 0 then
         send = (t*9)/5 + 320
-    	print("    posting temperature ") 
-      
+    	print("    posting temperature ")
+        tempStr = "    "..tostring(send/10).."."..tostring(send % 10).." deg F"
+ --       print(tempStr)   
     else
         send = h
         print("    posting humidity ")
+        hmdyStr = "    "..tostring(send/10).."."..tostring(send % 10).." %" 
+--        print(hmdyStr)
     end	
-    dispit(10,"Office Sensor","   temp - "..send.."deg","   humidity - ")
+    dispPage(10,"Office Sensor",tempStr,hmdyStr)
     post(CHANNEL_API_KEY,FIELDS[pinptr],tostring(send/10).."."..tostring(send % 10))
 	pinptr = pinptr + 1
 	if pinptr > #PINS then pinptr = 1 end
 end
 
--- ************** start main loop ********************
+-- ************** start main function ********************
+
     print("\n\n*** thermo.lua  version "..version.." ***")
-    init_i2c_display()
-
-
-    
-if (#PINS ~= #FIELDS) then 
-	print("\n***** pin count and field count do not match\naborting")
-else
-
-	print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
-	print("  running update every " .. delay .. "ms\n")
-
-	tmr.alarm(0, delay, 1, update) 
-end
+    if (#PINS ~= #FIELDS) then 
+        print("\n***** pin count and field count do not match\naborting")
+    else
+        print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
+        print("  running update every " .. delay .. "ms\n")
+        init_i2c_display()  -- initialise the OLED display 
+        tmr.alarm(0, delay, 1, update) -- execute update function every <delay> micro seconds
+    end
