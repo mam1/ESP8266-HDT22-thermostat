@@ -8,8 +8,8 @@ pinptr = 1
 -- setup I2c and connect display
 function init_i2c_display()
      -- SDA and SCL can be assigned freely to available GPIOs
-     local sda = 6 -- GPIO14
-     local scl = 5 -- GPIO12
+     local sda = 5 -- GPIO14
+     local scl = 6 -- GPIO12
      local sla = 0x3c
      print("  initializng I2c OLED display on pins "..sda.." and "..scl)    
      i2c.setup(0, sda, scl, i2c.SLOW)
@@ -31,6 +31,18 @@ function ascii_1()
                disp:drawStr(x*7, y*10+10, string.char(s))
           end
      end
+end
+
+function dispit(line,text1,text2,text3)
+
+   --picture loop
+  disp:firstPage() 
+  while disp:nextPage() do 
+    disp:drawStr(0,line,text1)
+    disp:drawStr(0,(line+15),text2)
+    disp:drawStr(0,(line+25),text3)
+  end
+ 
 end
 
 --get data from DHT22 sensor on <pin>
@@ -92,11 +104,13 @@ function update()
     t, h = rdDHT22(PINS[pinptr])
     if pinptr % 2 ~= 0 then
         send = (t*9)/5 + 320
-    	print("    posting temperature ")       
+    	print("    posting temperature ") 
+      
     else
         send = h
         print("    posting humidity ")
     end	
+    dispit(10,"Office Sensor","   temp - "..send.."deg","   humidity - ")
     post(CHANNEL_API_KEY,FIELDS[pinptr],tostring(send/10).."."..tostring(send % 10))
 	pinptr = pinptr + 1
 	if pinptr > #PINS then pinptr = 1 end
@@ -106,12 +120,7 @@ end
     print("\n\n*** thermo.lua  version "..version.." ***")
     init_i2c_display()
 
-   --picture loop
-  disp:firstPage() 
-  while disp:nextPage() do 
-    disp:drawStr(10,10,"xxxx")
-  end
- 
+
     
 if (#PINS ~= #FIELDS) then 
 	print("\n***** pin count and field count do not match\naborting")

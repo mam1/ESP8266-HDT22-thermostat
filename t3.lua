@@ -1,8 +1,8 @@
  -- setup I2c and connect display
 function init_i2c_display()
      -- SDA and SCL can be assigned freely to available GPIOs
-     local sda = 6 -- GPIO14
-     local scl = 5 -- GPIO12
+     local sda = 5 -- GPIO14
+     local scl = 6 -- GPIO12
      local sla = 0x3c
      print("  initializng I2c OLED display on pins "..sda.." and "..scl)    
      i2c.setup(0, sda, scl, i2c.SLOW)
