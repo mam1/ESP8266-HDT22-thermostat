@@ -24,9 +24,8 @@ function init_i2c_display()
      disp:setColorIndex(1)
 end
 
-
+-- update OLED display
 function dispPage(line,text1,text2,text3)
-
    --picture loop
   disp:firstPage() 
   while disp:nextPage() do 
@@ -34,7 +33,6 @@ function dispPage(line,text1,text2,text3)
     disp:drawStr(0,(line+15),text2)
     disp:drawStr(0,(line+27),text3)
   end
- 
 end
 
 --get data from DHT22 sensor on <pin>
@@ -88,22 +86,20 @@ function post(key,field,value)
         collectgarbage(); 
     end)
     connout:connect(80,'api.thingspeak.com')
-end
+end 
 
+-- update temperature and humidity
 function update()
 	local t, h,send
-
-    t, h = rdDHT22(PINS[pinptr])
+    t, h = rdDHT22(PINS[pinptr]) --read the HDT22 sensor
     if pinptr % 2 ~= 0 then
         send = (t*9)/5 + 320
     	print("    posting temperature ")
-        tempStr = "    "..tostring(send/10).."."..tostring(send % 10).." deg F"
- --       print(tempStr)   
+        tempStr = "    "..tostring(send/10).."."..tostring(send % 10).." deg F"  
     else
         send = h
         print("    posting humidity ")
         hmdyStr = "    "..tostring(send/10).."."..tostring(send % 10).." %" 
---        print(hmdyStr)
     end	
     dispPage(10,"Office Sensor",tempStr,hmdyStr)
     post(CHANNEL_API_KEY,FIELDS[pinptr],tostring(send/10).."."..tostring(send % 10))
