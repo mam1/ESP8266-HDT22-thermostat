@@ -1,7 +1,7 @@
-version = "0.1.0"
+version = "0.9.0"
 CHANNEL_API_KEY = "WLDS1EKH6GRTK2QN"
 delay = 60000
-PINS =   {1,1}  --DHT22 data pin
+PINS =   {7,7}  --DHT22 data pin
 FIELDS = {1,2}  --ThingSpeak fields
 pinptr = 1
 
@@ -32,7 +32,7 @@ function dispPage(line,text1,text2,text3)
     disp:drawStr(0,line,text1)
     disp:drawStr(0,(line+15),text2)
     disp:drawStr(0,(line+27),text3)
-    disp:drawStr(0,(line+35),"v "..version)
+    disp:drawStr(0,(line+45),"v "..version)
   end
 end
 
@@ -93,6 +93,7 @@ end
 function update()
 	local t, h,send
     t, h = rdDHT22(PINS[pinptr]) --read the HDT22 sensor
+    print("***")
     if pinptr % 2 ~= 0 then
         send = (t*9)/5 + 320
     	print("    posting temperature ")
@@ -117,6 +118,6 @@ end
         print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
         print("  running update every " .. delay .. "ms\n")
         init_i2c_display()  -- initialise the OLED display 
-        dispPage(20," thermo.lua - "," "," ")
+        dispPage(10," thermo.lua - "," "," ")
         tmr.alarm(0, delay, 1, update) -- execute update function every <delay> micro seconds
     end
