@@ -11,8 +11,8 @@ hmdyStr = " "
 -- setup I2c and connect display
 function init_i2c_display()
      -- SDA and SCL can be assigned freely to available GPIOs
-     local sda = 5 -- GPIO14
-     local scl = 6 -- GPIO12
+     local sda = 6 -- GPIO14
+     local scl = 5 -- GPIO12
      local sla = 0x3c
      print("  initializng I2c OLED display on pins "..sda.." and "..scl)    
      i2c.setup(0, sda, scl, i2c.SLOW)
@@ -32,6 +32,7 @@ function dispPage(line,text1,text2,text3)
     disp:drawStr(0,line,text1)
     disp:drawStr(0,(line+15),text2)
     disp:drawStr(0,(line+27),text3)
+    disp:drawStr(0,(line+35),"v "..version)
   end
 end
 
@@ -116,5 +117,6 @@ end
         print("  reading "..(#PINS / 2).." HDT22 sensor\n  posting data to ThingSpeak api key "..CHANNEL_API_KEY)
         print("  running update every " .. delay .. "ms\n")
         init_i2c_display()  -- initialise the OLED display 
+        dispPage(20," thermo.lua - "," "," ")
         tmr.alarm(0, delay, 1, update) -- execute update function every <delay> micro seconds
     end
